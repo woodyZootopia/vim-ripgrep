@@ -12,8 +12,8 @@ if !exists('g:rg_format')
   let g:rg_format = "%f:%l:%c:%m"
 endif
 
-if !exists('g:rg_command')
-  let g:rg_command = g:rg_binary . ' --vimgrep'
+if !exists('g:rg_option')
+  let g:rg_option = '--vimgrep'
 endif
 
 if !exists('g:rg_root_types')
@@ -78,7 +78,7 @@ endfun
 fun! s:RgGrepContext(search, txt)
   let l:grepprgb = &grepprg
   let l:grepformatb = &grepformat
-  let &grepprg = g:rg_command
+  let &grepprg = g:rg_binary . ' ' . g:rg_option
   let &grepformat = g:rg_format
   let l:te = &t_te
   let l:ti = &t_ti
