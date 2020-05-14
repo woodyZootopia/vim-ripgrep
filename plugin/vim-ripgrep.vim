@@ -28,12 +28,23 @@ if !exists('g:rg_window_location')
   let g:rg_window_location = 'botright'
 endif
 
+if !exists('g:rg_use_location_list')
+  let g:rg_use_location_list = 0
+endif
+
 fun! g:RgVisual() range
   call s:RgGrepContext(function('s:RgSearch'), '"' . s:RgGetVisualSelection() . '"')
 endfun
 
 fun! s:Rg(txt)
   call s:RgGrepContext(function('s:RgSearch'), s:RgSearchTerm(a:txt))
+endfun
+
+fun! s:LRg(txt)
+  let l:rg_use_location_list_bak = g:rg_use_location_list
+  let g:rg_use_location_list = 1
+  call s:RgGrepContext(function('s:RgSearch'), s:RgSearchTerm(a:txt))
+  let g:rg_use_location_list = l:rg_use_location_list_bak
 endfun
 
 fun! s:RgGetVisualSelection()
@@ -65,15 +76,24 @@ fun! s:RgSearch(txt)
   if &smartcase == 1
     let l:rgopts = l:rgopts . '-S '
   endif
-  silent! exe 'grep! ' . l:rgopts . a:txt
-  if len(getqflist())
-    exe g:rg_window_location 'copen'
+  if (g:rg_use_location_list==1)
+    let l:rg_grep_cmd = 'lgrep! '
+    let l:rg_window_cmd = 'lopen'
+    let l:rg_window_close_cmd = 'lclose'
+  else
+    let l:rg_grep_cmd = 'grep! '
+    let l:rg_window_cmd = 'copen'
+    let l:rg_window_close_cmd = 'cclose'
+  endif
+  silent! exe l:rg_grep_cmd  . l:rgopts . a:txt
+  if (g:rg_use_location_list ? len(getloclist(0)) : len(getqflist()))
+    exe g:rg_window_location . ' ' . l:rg_window_cmd
     redraw!
     if exists('g:rg_highlight')
       call s:RgHighlight(a:txt)
     endif
   else
-    cclose
+    exe l:rg_window_close_cmd
     redraw!
     echo "No match found for " . a:txt
   endif
@@ -161,4 +181,5 @@ fun! s:RgGetCwd() abort
 endfun
 
 command! -nargs=* -complete=file Rg :call s:Rg(<q-args>)
+command! -nargs=* -complete=file LRg :call s:LRg(<q-args>)
 command! -complete=file RgRoot :call s:RgShowRoot()
