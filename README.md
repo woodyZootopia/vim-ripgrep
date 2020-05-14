@@ -15,13 +15,14 @@ Selecting text in visual mode and `:Rg` will search selected text.
 | ---------------------    | --------------------------- | ----------
 | `g:rg_binary`            | `rg`                        | path to rg
 | `g:rg_format`            | `%f:%l:%c:%m`               | value of grepformat
-| `g:rg_option`            | `--vimgrep`                 | search command option
+| `g:rg_option`            | `--vimgrep`                 | search command option (`g:rg_command` is deprecated!)
 | `g:rg_highlight`         | `0`                         | true if you want matches highlighted
 | `g:rg_derive_root`       | `0`                         | true if you want to find project root from cwd
 | `g:rg_root_types`        | `['.git']`                  | list of files/dir found in project root
+| `g:rg_root`              | `'cwd'`                     | change this to `'file'` if you want to search from current file instead of current directory
 | `g:rg_use_location_list` | `0`                         | if `1`, use location list instead of quickfix list
 | `g:rg_window_location`   | `botright`                  | quickfix window location
-    
+
 ## misc
 
 Show root search dir
