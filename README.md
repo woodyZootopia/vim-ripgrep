@@ -5,7 +5,8 @@
 :LRg <string|pattern> "store to location list
 ```
 
-Word under cursor will be searched if no argument is passed to `Rg`
+Word under cursor will be searched if no argument is passed to `Rg`.
+Selecting text in visual mode and `:Rg` will search selected text.
 
 ## configuration
 

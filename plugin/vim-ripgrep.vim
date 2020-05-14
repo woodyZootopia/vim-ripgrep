@@ -37,13 +37,20 @@ fun! g:RgVisual() range
 endfun
 
 fun! s:Rg(txt)
-  call s:RgGrepContext(function('s:RgSearch'), s:RgSearchTerm(a:txt))
+  let l:selected_texts = s:RgGetVisualSelection()
+  if l:selected_texts == []
+    call s:RgGrepContext(function('s:RgSearch'), s:RgSearchTerm(a:txt))
+  elseif len(l:selected_texts) > 1
+    echo "Multiple line search is not supported yet."
+  else
+    call s:RgGrepContext(function('s:RgSearch'), s:RgSearchTerm(l:selected_texts[0]))
+  endif
 endfun
 
 fun! s:LRg(txt)
   let l:rg_use_location_list_bak = g:rg_use_location_list
   let g:rg_use_location_list = 1
-  call s:RgGrepContext(function('s:RgSearch'), s:RgSearchTerm(a:txt))
+  call s:Rg(a:txt)
   let g:rg_use_location_list = l:rg_use_location_list_bak
 endfun
 
@@ -53,11 +60,11 @@ fun! s:RgGetVisualSelection()
     let [line_end, column_end] = getpos("'>")[1:2]
     let lines = getline(line_start, line_end)
     if len(lines) == 0
-        return ''
+        return []
     endif
     let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
     let lines[0] = lines[0][column_start - 1:]
-    return join(lines, "\n")
+    return lines
 endfun
 
 fun! s:RgSearchTerm(txt)
@@ -180,6 +187,6 @@ fun! s:RgGetCwd() abort
   endif
 endfun
 
-command! -nargs=* -complete=file Rg :call s:Rg(<q-args>)
-command! -nargs=* -complete=file LRg :call s:LRg(<q-args>)
+command! -range -nargs=* -complete=file Rg :call s:Rg(<q-args>)
+command! -range -nargs=* -complete=file LRg :call s:LRg(<q-args>)
 command! -complete=file RgRoot :call s:RgShowRoot()
