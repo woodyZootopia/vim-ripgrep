@@ -80,8 +80,8 @@ fun! s:RgSearch(txt)
 endfun
 
 fun! s:RgGrepContext(search, txt)
-  let l:grepprgb = &grepprg
-  let l:grepformatb = &grepformat
+  let l:grepprg_bak = &grepprg
+  let l:grepformat_bak = &grepformat
   let &grepprg = g:rg_binary . ' ' . g:rg_option
   let &grepformat = g:rg_format
   let l:te = &t_te
@@ -96,24 +96,24 @@ fun! s:RgGrepContext(search, txt)
   if exists('g:rg_derive_root')
     call s:RgPathContext(a:search, a:txt)
   else
-  let l:cwdb = getcwd()
+  let l:cwd_bak = getcwd()
   exe 'lcd '.s:RgGetCwd()
   call a:search(a:txt)
-  exe 'lcd '.l:cwdb
+  exe 'lcd '.l:cwd_bak
   endif
 
   let &shellpipe=l:shellpipe_bak
   let &t_te=l:te
   let &t_ti=l:ti
-  let &grepprg = l:grepprgb
-  let &grepformat = l:grepformatb
+  let &grepprg = l:grepprg_bak
+  let &grepformat = l:grepformat_bak
 endfun
 
 fun! s:RgPathContext(search, txt)
-  let l:cwdb = getcwd()
+  let l:cwd_bak = getcwd()
   exe 'lcd '.s:RgRootDir()
   call a:search(a:txt)
-  exe 'lcd '.l:cwdb
+  exe 'lcd '.l:cwd_bak
 endfun
 
 fun! s:RgHighlight(txt)
