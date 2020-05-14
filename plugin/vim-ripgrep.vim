@@ -16,6 +16,10 @@ if !exists('g:rg_option')
   let g:rg_option = '--vimgrep'
 endif
 
+if !exists('g:rg_root')
+  let g:rg_root = 'cwd'
+endif
+
 if !exists('g:rg_root_types')
   let g:rg_root_types = ['.git']
 endif
@@ -92,7 +96,10 @@ fun! s:RgGrepContext(search, txt)
   if exists('g:rg_derive_root')
     call s:RgPathContext(a:search, a:txt)
   else
-    call a:search(a:txt)
+  let l:cwdb = getcwd()
+  exe 'lcd '.s:RgGetCwd()
+  call a:search(a:txt)
+  exe 'lcd '.l:cwdb
   endif
 
   let &shellpipe=l:shellpipe_bak
@@ -115,8 +122,8 @@ fun! s:RgHighlight(txt)
 endfun
 
 fun! s:RgRootDir()
-  let l:cwd = getcwd()
-  let l:dirs = split(getcwd(), '/')
+  let l:cwd = s:RgGetCwd()
+  let l:dirs = split(s:RgGetCwd(), '/')
 
   for l:dir in reverse(copy(l:dirs))
     for l:type in g:rg_root_types
@@ -142,6 +149,14 @@ fun! s:RgShowRoot()
     echo s:RgRootDir()
   else
     echo getcwd()
+  endif
+endfun
+
+fun! s:RgGetCwd() abort
+  if g:rg_root == 'cwd'
+    return getcwd()
+  elseif g:rg_root == 'file'
+    return expand("%:p:h")
   endif
 endfun
 
