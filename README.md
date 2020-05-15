@@ -30,3 +30,9 @@ Show root search dir
 ```vim
 :RgRoot
 ```
+
+## TODO
+
+* autoload for lazy loading.
+* possibly shortcuts in quickfix/location list? (Suggested in #22)
+* Add documentation.
