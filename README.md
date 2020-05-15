@@ -36,3 +36,6 @@ Show root search dir
 * autoload for lazy loading.
 * possibly shortcuts in quickfix/location list? (Suggested in #22)
 * Add documentation.
+* OS related problems in Windows/macOS?
+* support for fish?
+* passing flags like `-tcss?`
